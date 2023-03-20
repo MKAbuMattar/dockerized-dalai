@@ -1,8 +1,8 @@
 version: '3'
 
 services:
-  dilai:
-    container_name: DilAI
+  dalai:
+    container_name: DalAI
     build:
       context: .
       dockerfile: Dockerfile
@@ -10,8 +10,8 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - dilai
+      - dalai
 
 networks:
-  dilai:
+  dalai:
     driver: bridge

@@ -1,6 +1,6 @@
-# Dockerized DilAI
+# Dockerized DalAI
 
-This repository contains the Dockerfile and the scripts to build the Docker image for the [DilAI](https://github.com/cocktailpeanut/dalai) project, documented in the [DilAI documentation](https://cocktailpeanut.github.io/dalai/).
+This repository contains the Dockerfile and the scripts to build the Docker image for the [DalAI](https://github.com/cocktailpeanut/dalai) project, documented in the [DalAI documentation](https://cocktailpeanut.github.io/dalai/).
 
 ## Building the Docker image
 
@@ -48,7 +48,7 @@ RUN npx --verbose dalai llama install 7B 13B 30B 65B
 RUN npx --verbose dalai alpaca install 7B
 ```
 
-After the container is running, you can access the DilAI web interface at [http://localhost:3000](http://localhost:3000).
+After the container is running, you can access the DalAI web interface at [http://localhost:3000](http://localhost:3000).
 
 ## Stopping the Docker container
 
