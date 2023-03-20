@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  dilai:
+    container_name: DilAI
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - dilai
+
+networks:
+  dilai:
+    driver: bridge
