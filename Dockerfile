@@ -1,39 +1,51 @@
-# use ubuntu latest
-FROM ubuntu:latest
+# ARG for the base image
+ARG BASE_IMAGE=python:3.10-slim-buster
 
-# metadata
-LABEL maintainer="Mohammad Abu Mattar"
-LABEL container="DalAI"
-LABEL version="0.0.1"
-
-# set work directory
-WORKDIR /app
+# use python as the base image
+FROM ${BASE_IMAGE} AS base
 
 # update and install dependencies
-RUN apt-get update && \
-  apt-get install -y software-properties-common && \
-  add-apt-repository ppa:deadsnakes/ppa -y && \
-  apt-get update && \
-  apt-get install -y python3.10 python3-pip python3-venv python-is-python3 && \
-  apt-get install -y build-essential cmake curl gcc git make && \
-  curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-  apt-get install -y nodejs
+RUN apt-get update \
+  && apt-get install -y \
+  build-essential \
+  curl \
+  g++ \
+  git \
+  make \
+  python3-venv \
+  software-properties-common
+
+# add NodeSource PPA to get Node.js 18.x
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+
+# Install Node.js 18.x
+RUN apt-get update \
+  && apt-get install -y nodejs
+
+FROM base AS builder
+
+# work directory
+WORKDIR /app
 
 # clone repository dalai repo
-RUN git clone https://github.com/cocktailpeanut/dalai.git . --depth 1
+RUN git clone --depth 1 https://github.com/cocktailpeanut/dalai.git .
 
 # install npm dependencies
 RUN npm install
 
-# install Python dependencies
-RUN pip install torch
+# ARGs are used to pass the version of the base image and the LLaMA and Alpaca modules
+ARG LLAMA_VERSION=""
+ARG ALPACA_VERSION=""
+
+ENV LLAMA_VERSION=${LLAMA_VERSION}
+ENV ALPACA_VERSION=${ALPACA_VERSION}
 
 # install the LLaMA module
 # there are more modules available:
-# - 7B: LLaMA 7B
+# - 7B
 #   - Full: The model takes up 31.17GB
 #   - Quantized: 4.21GB
-# - 13B: LLaMA 13B
+# - 13B
 #   - Full: The model takes up 60.21GB
 #   - Quantized: 4.07GB * 2 = 8.14GB
 # - 30B
@@ -42,13 +54,15 @@ RUN pip install torch
 # - 65B
 #   - Full: The model takes up 330.48GB
 #   - Quantized: 5.11GB * 8 = 40.88GB
-# RUN npx --verbose dalai llama install 7B
+RUN if [ -n "${LLAMA_VERSION}" ]; then npx --verbose dalai llama install ${LLAMA_VERSION}; fi
 
 # install the Alpaca module
 # there are more modules available:
-# - 7B: Alpaca 7B
+# - 7B
 #   - Compressed: 4.21GB
-RUN npx --verbose dalai alpaca install 7B
+# - 13B
+#   - Compressed: 8.14GB
+RUN if [ -n "${ALPACA_VERSION}" ]; then npx --verbose dalai alpaca install ${ALPACA_VERSION}; fi
 
 # expose port 3000
 EXPOSE 3000

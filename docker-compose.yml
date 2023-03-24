@@ -6,6 +6,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - LLAMA_VERSION= # add the module version here (e.g. 7B)
+        - ALPACA_VERSION= # add the module version here (e.g. 7B)
     restart: always
     ports:
       - "3000:3000"

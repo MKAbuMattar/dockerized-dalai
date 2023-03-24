@@ -20,32 +20,24 @@ docker-compose up -d --build
 
 This will build the Docker image and run the container in the background. The container will be named `dalai`.
 
-> **Note**: The first time you run this command, it will take a while to download the base image and install the dependencies. Subsequent runs will be much faster.
+**Note**: The first time you run this command, it will take a while to download the base image and install the dependencies. Subsequent runs will be much faster.
 
-> **Note**: If you want add more AI models, you can add them to the `Dockerfile` and rebuild the image.
+**Note**: If you want add more AI models, you can add them to the `docker-compose.yml` file. You can add more than one model by to the `args` section of the `dalai` service. For example, to add the `7B` model, you can add the following line to the `args` section:
 
-```dockerfile
-# install the LLaMA module
-# there are more modules available:
-# - 7B: LLaMA 7B
-#   - Full: The model takes up 31.17GB
-#   - Quantized: 4.21GB
-# - 13B: LLaMA 13B
-#   - Full: The model takes up 60.21GB
-#   - Quantized: 4.07GB * 2 = 8.14GB
-# - 30B
-#   - Full: The model takes up 150.48GB
-#   - Quantized: 5.09GB * 4 = 20.36GB
-# - 65B
-#   - Full: The model takes up 330.48GB
-#   - Quantized: 5.11GB * 8 = 40.88GB
-RUN npx --verbose dalai llama install 7B 13B 30B 65B
+```yaml
+---
+args:
+  - LLAMA_VERSION= 7B # add the module version here (e.g. 7B)
+  - ALPACA_VERSION= 7B # add the module version here (e.g. 7B)
+```
 
-# install the Alpaca module
-# there are more modules available:
-# - 7B: Alpaca 7B
-#   - Compressed: 4.21GB
-RUN npx --verbose dalai alpaca install 7B
+or you can add the models as `volumes`:
+
+```yaml
+---
+volumes:
+  - ./models/alpaca:/root/dalai/alpaca # add the model here
+  - ./models/llama:/root/dalai/llama # add the model here
 ```
 
 After the container is running, you can access the DalAI web interface at [http://localhost:3000](http://localhost:3000).
